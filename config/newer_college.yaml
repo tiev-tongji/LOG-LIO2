@@ -1,0 +1,87 @@
+common:
+    lid_topic:  "/os1_cloud_node/points"
+    imu_topic:  "/os1_cloud_node/imu"
+    time_sync_en: false         # ONLY turn on when external time synchronization is really not possible
+
+preprocess:
+    lidar_type: 3                # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR,
+    scan_line: 64
+    scan_rate: 10                # only need to be set for velodyne, unit: Hz,
+    timestamp_unit: 3                 # 0-second, 1-milisecond, 2-microsecond, 3-nanosecond.
+    Horizon_SCAN: 1024           # lidar horizontal resolution (Velodyne:1800, Ouster:512,1024,2048)
+    blind: 2
+    point_filter_num: 4
+
+mapping:
+    down_sample_size: 0.4
+    max_iteration: 3
+    voxel_size: 3.2
+    max_layer: 3                # 4 layer, 0, 1, 2, 3
+    layer_point_size: [ 5, 5, 5, 5, 5 ]
+    plannar_threshold: 0.01
+    max_points_size: 2000      # #todo
+    max_cov_points_size: 2000  # #todo
+
+    fov_degree:    360
+    det_range:     120.0
+    extrinsic_est_en:  false      # true: enable the online estimation of IMU-LiDAR extrinsic,
+    extrinsic_T: [-0.006253, 0.011775, -0.028535]     # imu <-- lidar
+    #    extrinsic_q_en: true
+    #    extrinsic_q: [0.0, 0.0, -1.0, 0.0]       #(qx, qy, qz, qw)
+    extrinsic_R: [ -1, 0, 0,
+                   0, -1, 0,
+                   0, 0, 1 ]
+
+noise_model:
+    ranging_cov: 0.04
+    angle_cov: 0.1
+    acc_cov: 0.1
+    gyr_cov: 0.1
+    b_acc_cov: 0.000106
+    b_gyr_cov: 4e-06
+
+log:
+    enable: true
+
+normal:
+    project_name: log_lio
+    compute_table: false
+    ring_table_dir: "/config/newer_college"
+    compute_normal: true
+#    check_normal: false
+
+cov_scale:
+    roughness_cov_scale: 0.01  # 0.002
+    incident_cov_max: 0.01
+    incident_cov_scale: 0.8     # 1.0
+    visual_ray_scale: 0.05       # along ray direction
+    visual_tan_scale: 1.0       # non-ray direction
+    visual_a_scale: 0.5       # transparent
+
+cov_incremental:
+    lambda_cov_threshold: 0.0001
+    normal_cov_threshold: 0.00001    # normal cov incremental term 2 magnitude
+    normal_cov_incre_min: 400000
+    normal_cov_update_interval: 100
+    num_update_thread: 4
+
+publish:
+    pub_voxel_map: false
+    publish_max_voxel_layer: 1         # only publish 0,1,2 layer's plane
+    path_en:  true
+    scan_publish_en:  true       # false: close all the point cloud output
+    dense_publish_en: true       # false: low down the points number in a global-frame point clouds scan.
+    scan_bodyframe_pub_en: true  # true: output the point cloud scans in IMU-body-frame
+
+pcd_save:
+    pcd_save_en: false
+    interval: -1                 # how many LiDAR frames saved in each pcd file;
+    # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+
+
+# Cam0 in IMU frame
+ground_truth:
+    extrinsic_T: [ 0.04249269, 0.06466842, -0.01845775 ]
+    extrinsic_R: [ 0.70992163,  0.02460003,  0.70385092,
+                   -0.70414167,  0.00493623,  0.71004236,
+                   0.01399269, -0.99968519,  0.02082624 ]

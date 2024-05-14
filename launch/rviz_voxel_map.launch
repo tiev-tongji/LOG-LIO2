@@ -1,0 +1,19 @@
+<launch>
+    <!-- Launch file for velodyne16 VLP-16 LiDAR -->
+
+    <arg name="rviz" default="true"/>
+    <arg name="debug" default="false"/>
+
+<!--    <rosparam command="load" file="$(find log_lio)/config/m2dgr.yaml"/>-->
+
+    <param name="max_color_scale" type="double" value="0.01"/>
+    <node pkg="log_lio" type="visualize_node" name="visualize_node" output="screen">
+
+    </node>
+
+    <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz"
+              args="-d $(find log_lio)/config/rviz_cfg/voxel_mapping.rviz"/>
+    </group>
+
+</launch>

@@ -1,0 +1,30 @@
+<launch>
+    <!-- Launch file for velodyne16 VLP-16 LiDAR -->
+
+    <arg name="rviz" default="true"/>
+    <arg name="debug" default="false"/>
+
+    <rosparam command="load" file="$(find log_lio)/config/m2dgr.yaml"/>
+
+    <arg name="data_path" default="/home/hk/bagfiles/m2dgr/door_01" />
+    <arg name="bag_file" default="$(arg data_path)/door_02.bag"/>
+
+
+    <group if="$(eval arg('debug') == False)">
+        <node pkg="log_lio" type="log_lio_node" name="log_lio_node" output="screen">
+            <param name="bag_file" type="string" value="$(arg bag_file)"/>
+        </node>
+    </group>
+
+    <group if="$(arg rviz)">
+        <node launch-prefix="nice" pkg="rviz" type="rviz" name="rviz"
+              args="-d $(find log_lio)/config/rviz_cfg/voxel_mapping.rviz"/>
+    </group>
+
+<!--    <node pkg="rosbag" type="play" name="rosbag_player" required="false"-->
+<!--          args="$(arg bag_file)"-->
+<!--          launch-prefix="bash -c 'sleep 5; $0 $@'"-->
+<!--          />-->
+
+
+</launch>
